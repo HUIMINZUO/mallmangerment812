@@ -101,7 +101,18 @@
 </template>
 
 <script>
-export default {};
+export default {
+  // 在newVue之前自动触发
+   beforeCreate() {
+     const token = localStorage.getItem('token')
+     if(!token) {
+       // 没有token的话，让用户进行登录操作
+       this.$router.push({name: 'login'})
+     }
+     // 有token的话，继续渲染组件
+   }
+  // 获取token
+};
 </script>
 
 <style>
