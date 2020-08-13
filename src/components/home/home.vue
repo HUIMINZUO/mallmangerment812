@@ -20,9 +20,10 @@
     </el-header>
     <el-container>
       <el-aside class="aside" width="200px">
-        <!-- 侧边栏导航 -->
-        <el-menu :unique-opened="true">
-          <el-submenu index="1">
+        <!-- unique-opened="true"侧边栏导航 -->
+        <!-- router:true开启路由模式 -->
+        <el-menu :unique-opened="true" :router="true">
+          <el-submenu index="users">
             <template slot="title">
               <i class="el-icon-location"></i>
               <span>用户管理</span>
@@ -95,7 +96,10 @@
           </el-submenu>
         </el-menu>
       </el-aside>
-      <el-main class="main">Main</el-main>
+      <el-main class="main">
+        <!-- 容器 -->
+        <router-view></router-view>
+      </el-main>
     </el-container>
   </el-container>
 </template>
