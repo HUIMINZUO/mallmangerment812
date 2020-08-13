@@ -29,7 +29,7 @@
               <span>用户管理</span>
             </template>
             <!-- <template slot="title">分组一</template> -->
-            <el-menu-item index="1-1">
+            <el-menu-item index="users">
               <i class="el-icon-location"></i>
               <span>用户列表</span>
             </el-menu-item>
@@ -122,7 +122,7 @@ export default {
       // 2、退出时，提醒用户
       this.$message.success('退出成功')
       // 3、再返回到登录组件
-      this.$$router.push({name: 'login'})
+      this.$router.push({name: 'login'})
      }
    }
   // 获取token
