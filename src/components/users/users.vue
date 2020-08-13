@@ -18,10 +18,14 @@
       </el-col>
     </el-row>
     <!-- 3、表格 -->
-    <el-table :data="tableData" border style="width: 100%">
-      <el-table-column prop="date" label="日期" width="180"></el-table-column>
-      <el-table-column prop="name" label="姓名" width="180"></el-table-column>
-      <el-table-column prop="address" label="地址"></el-table-column>
+    <el-table class="tableHead" :data="tableData" border style="width: 100%">
+      <el-table-column type="index" label="#" width="60"></el-table-column>
+      <el-table-column prop="name" label="姓名" width="80"></el-table-column>
+      <el-table-column prop="address" label="邮箱"></el-table-column>
+      <el-table-column prop="address" label="电话"></el-table-column>
+      <el-table-column prop="address" label="创建时间"></el-table-column>
+      <el-table-column prop="address" label="用户状态"></el-table-column>
+      <el-table-column prop="address" label="操作"></el-table-column>
     </el-table>
     <!-- 4、分页 -->
   </el-tabs>
@@ -32,6 +36,8 @@ export default {
   data() {
     return {
       query: "",
+      pagenum: 1,
+      pagesize: 2,
       // 表格绑定的数据
       tableData: [
         {
@@ -43,9 +49,25 @@ export default {
           date: "2016-05-04",
           name: "王小虎",
           address: "上海市普陀区金沙江路 1517 弄",
-        }
+        },
       ],
     };
+  },
+  created() {
+    this.getUserList();
+  },
+  methods: {
+    // 获取用户列表的请求
+    async getUserList() {
+      // 需要授权的 API ，必须在请求头中使用 
+      // `Authorization` 字段提供 `token` 令牌
+      const AUTH_TOKEN = localStorage.getItem('token')
+      this.$http.defaults.headers.common['Authorization'] = AUTH_TOKEN
+      const res = await this.$http.get(
+        `users?query=${this.query}&pagenum=${this.pagenum}&pagesize=${this.pagesize}`
+      );
+      console.log(res);
+    },
   },
 };
 </script>
@@ -59,5 +81,8 @@ export default {
 }
 .searchRow {
   margin-top: 20px;
+}
+.tableHead {
+  margin-top: 10px;
 }
 </style>
