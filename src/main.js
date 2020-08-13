@@ -7,13 +7,17 @@ import '@/assets/css/reset.css'
 import App from './App'
 import router from './router'
 import MyServerHttp from '@/plugins/http.js'
+import moment from 'moment'
 // import axios from 'axios'
 // Vue.prototype.$http = axios
 
 Vue.use(ElementUI)
 Vue.use(MyServerHttp)
 // Vue.use(axios)
-
+// 全局过滤器
+Vue.filter('fmtdate', (v) => {
+  return moment(v).format('YYYY-MM-DD')
+})
 Vue.config.productionTip = false
 
 /* eslint-disable no-new */
