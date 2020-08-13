@@ -43,8 +43,8 @@
     </el-table-column>
     <el-table-column prop="address" label="操作">
       <template slot-scope="scope">
-        <el-button size="mini" plain type="primary" icon="el-icon-edit" circle></el-button>
-        <el-button size="mini" plain type="danger" icon="el-icon-delete" circle></el-button>
+        <el-button size="mini" plain type="primary" icon="el-icon-edit" circle @click="showEditUserDia()"></el-button>
+        <el-button size="mini" plain type="danger" icon="el-icon-delete" circle @click="showDelUserMsBox(scope.row.id)"></el-button>
         <el-button size="mini" plain type="success" icon="el-icon-check" circle></el-button>
       </template>
     </el-table-column>
@@ -75,6 +75,25 @@
       <el-button type="primary" @click="saveDocument()">确 定</el-button>
     </div>
   </el-dialog>
+
+  <!-- 编辑用户的对话框 -->
+  <el-dialog title="编辑用户" :visible.sync="dialogFormVisibleEdit">
+    <el-form :model="form">
+      <el-form-item label="用户名" :label-width="formLabelWidth">
+        <el-input v-model="form.username" autocomplete="off"></el-input>
+      </el-form-item>
+      <el-form-item label="邮箱" :label-width="formLabelWidth">
+        <el-input v-model="form.email" autocomplete="off"></el-input>
+      </el-form-item>
+      <el-form-item label="电话" :label-width="formLabelWidth">
+        <el-input v-model="form.mobile" autocomplete="off"></el-input>
+      </el-form-item>
+    </el-form>
+    <div slot="footer" class="dialog-footer">
+      <el-button @click="dialogFormVisibleEdit = false">取 消</el-button>
+      <el-button type="primary" @click="dialogFormVisibleEdit=false">确 定</el-button>
+    </div>
+  </el-dialog>
 </el-tabs>
 </template>
 
@@ -91,6 +110,7 @@ export default {
       pagesize: 2,
       // 添加对话框的属性
       dialogFormVisibleAdd: false,
+      dialogFormVisibleEdit: false,
       // 添加用户的表单数据
       form: {
         username: '',
@@ -117,14 +137,53 @@ export default {
     this.getUserList();
   },
   methods: {
+    // 编辑用户，显示对话框
+    showEditUserDia() {
+      this.dialogFormVisibleEdit = true
+    },
+    // 删除用户，打开消息盒子
+    showDelUserMsBox(userId) {
+      this.$confirm('此操作将永久删除该用户, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(async () => {
+        // 发送删除的请求
+        // 1、data中找用户的ID
+        // 2、把以参数的形式
+        const res = await this.$http.delete(`users/${userId}`)
+        console.log(res)
+        if (res.data.meta.status === 200) {
+          this.pagenum = 1
+          // 更新视图提示
+          this.getUserList()
+          // 提示
+          this.$message({
+            type: 'success',
+            message: res.data.meta.msg
+          })
+        }
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        })
+      });
+    },
     // 添加用户，发送请求
     async saveDocument() {
       // 2、关闭用户录入对话框
       this.dialogFormVisibleAdd = false
       const res = await this.$http.post(`users`, this.form)
       console.log(res)
-      const {meta:{status,msg},data} = res.data
-      if(status === 201) {
+      const {
+        meta: {
+          status,
+          msg
+        },
+        data
+      } = res.data
+      if (status === 201) {
         // 1、提示用户成功的被添加
         this.$message.success(msg)
         // 3、更新视图
